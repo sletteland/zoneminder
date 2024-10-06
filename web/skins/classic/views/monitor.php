@@ -473,7 +473,7 @@ switch ($name) {
 ?>
               <li class="Id">
                 <label><?php echo translate('Id') ?></label>
-                <input type="number" step="1" min="1" name="newMonitor[Id]" placeholder="<?php echo translate('leave blank for auto') ?>"/><br/>
+                <input type="number" step="1" min="1" name="newMonitor[Id]" placeholder="leave blank for auto"/><br/>
 <?php 
         if (count($available_monitor_ids)) {
           echo 'Some available ids: '.implode(', ', array_slice($available_monitor_ids, 0, 10));
@@ -1217,6 +1217,23 @@ echo htmlSelect('newMonitor[OutputContainer]', $videowriter_containers, $monitor
               <label><?php echo translate('RTSPStreamName'); echo makeHelpLink('OPTIONS_RTSPSTREAMNAME') ?></label>
               <input type="text" name="newMonitor[RTSPStreamName]" value="<?php echo validHtmlStr($monitor->RTSPStreamName()) ?>"/>
             </li>
+            <li id="FunctionZlMediaKitEnabled">
+              <label><?php echo translate('ZlMediaKit Live Stream') ?></label>
+              <input type="checkbox" name="newMonitor[ZlMediaKitEnabled]" value="1"<?php echo $monitor->ZlMediaKitEnabled() ? ' checked="checked"' : '' ?>/>
+<?php
+  if ( isset($OLANG['FUNCTION_ZLMEDIAKIT_ENABLED']) ) {
+    echo '<div class="form-text">'.$OLANG['FUNCTION_ZLMEDIAKIT_ENABLED']['Help'].'</div>';
+  }
+?>
+            <li id="FunctionZlMediaKitAudioEnabled"> 
+              <label><?php echo translate('ZlMediaKit Live Stream Audio') ?></label>
+              <input type="checkbox" name="newMonitor[ZlMediaKitAudioEnabled]" value="1"<?php echo $monitor->ZlMediaKitAudioEnabled() ? ' checked="checked"' : '' ?>/>
+<?php
+  if ( isset($OLANG['FUNCTION_ZLMEDIAKIT_AUDIO_ENABLED']) ) {
+    echo '<div class="form-text">'.$OLANG['FUNCTION_ZLMEDIAKIT_AUDIO_ENABLED']['Help'].'</div>';
+  }
+?>
+	    <li>
             <li id="FunctionRTSP2WebEnabled">
               <label><?php echo translate('RTSP2Web Live Stream') ?></label>
               <input type="checkbox" name="newMonitor[RTSP2WebEnabled]" value="1"<?php echo $monitor->RTSP2WebEnabled() ? ' checked="checked"' : '' ?>/>
@@ -1341,7 +1358,7 @@ $codecs = array(
 ?>
             <li>
               <label><?php echo translate('TimestampLabelFormat') ?></label>
-              <input type="text" name="newMonitor[LabelFormat]" value="<?php echo validHtmlStr($monitor->LabelFormat()) ?>" placeholder="<?php echo translate('Python strftime format. %f for hundredths, %N for Monitor Name, %Q for show text.') ?>"/>
+              <input type="text" name="newMonitor[LabelFormat]" value="<?php echo validHtmlStr($monitor->LabelFormat()) ?>" placeholder="Python strftime format. %f for hundredths, %N for Monitor Name, %Q for show text."/>
             </li>
             <li>
               <label><?php echo translate('TimestampLabelX') ?></label>

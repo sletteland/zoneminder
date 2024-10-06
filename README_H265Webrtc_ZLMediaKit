@@ -1,0 +1,71 @@
+This  is a fork of zoneminder that  uses  the  excellent(!!)   ZLMediaKit Media server .
+
+https://github.com/ZLMediaKit/ZLMediaKit 
+
+
+the purpose being : stream camera content in a browser  in H265 webrtc .
+
+the browser to use for Linux  X86/64  is Chrome Version 131.0.6724.0 (Official Build) dev (64-bit) (unstable developement version )  
+
+
+command line options are   (Those options  are needed ! )   (hardware decoding ) :
+
+/opt/google/chrome-unstable/chrome --ignore-gpu-blocklist --disable-gpu-driver-bug-workaround --use-gl=angle --use-angle=vulkan --enable-features=VaapiIgn
+oreDriverChecks,Vulkan,DefaultANGLEVulkan,VulkanFromANGLE,PlatformHEVCEncoderSupport,WebRtcAllowH265Send,WebRtcAllowH265Receive,PlatformHEVCEncoderSupport
+,VaapiOnNvidiaGPUs,VaapiVideoEncoder --force-fieldtrials=WebRTC-Video-H26xPacketBuffer/Enabled
+
+a recent Intel (AMD or Nvidia will not do for the moment ) video card or integrated GPU (on the client machine ( browser)   ( for example Intel Corporation DG2 [Arc A310] (rev 05) )
+
+this can also work on a recent android phone ( for example Galaxy A33) that can do hardware decoding  of H265 .
+
+You need a special version of Chromium for that .
+
+Here is one , ready compiled :
+https://github.com/StaZhu/enable-chromium-hevc-hardware-decoding/releases/download/130.0.6690.0/chromium_130.0.6690.0_android_arm64_with_hevc_hw_sw_decode_encode_support.apk
+
+(from https://github.com/StaZhu/enable-chromium-hevc-hardware-decoding ) 
+
+
+to install and configure ZLmediakit , look at :
+
+https://docs.zlmediakit.com/
+
+https://docs.zlmediakit.com/guide/media_server/config_file.html
+
+
+
+I put the config.in for ZLMediaKit that i used  in /misc 
+
+
+Of interest are the following lines :
+
+[ffmpeg]
+  bin=/usr/bin/ffmpeg
+  cmd=%s  -i %s -vcodec copy -c:a libopus  -f rtsp   -rtsp_transport tcp  %s
+#need for audio conversion  (aac to Opus )
+
+
+externIP=86.197.35.150,192.168.1.56
+ #first is externaly visible IP address   (can be Env variable if IP is dynamic (Xdsl etc )
+ #second one is local lan address of the server  (needed for clients on same Lan ) 
+
+------------------------
+
+
+Last thing about This fork of Zoneminder:
+I need to add some new configuration variables in the mysql database ( not many 4 or 5 )
+I could not figure out how to update the database automatically . 
+So i did not bother  and did it manually .
+
+This means , after installing this fork of zoneminder for the 1st time  , you will have to run  db/zm_update-for_zlmediakit.sql
+to update the database .
+
+
+
+
+Bruno Grasland  
+
+b.slettteland@orange.fr 
+
+
+

@@ -71,6 +71,25 @@ if ( !canEdit('Monitors') ) return;
 ?>
 
         </div>
+        <div class="form-group" id="FunctionZlMediaKitEnabled">
+          <label for="newZlMediaKitEnabled"><?php echo translate('ZlMediaKit Enabled') ?></label>
+          <input type="checkbox" name="newZlMediaKitEnabled" id="newZlMediaKitEnabled" value="1"/>
+<?php
+  if ( isset($OLANG['FUNCTION_ZlMediaKit_ENABLED']) ) {
+    echo '<div class="form-text">'.$OLANG['FUNCTION_ZlMediaKit_ENABLED']['Help'].'</div>';
+  }
+?>
+
+        </div>
+        <div class="form-group" id="FunctionZlMediaKitAudioEnabled">
+          <label for="newZlMediaKitAudioEnabled"><?php echo translate('ZlMediaKit Audio Enabled') ?></label>
+          <input type="checkbox" name="newZlMediaKitAudioEnabled" id="newZlMediaKitAudioEnabled" value="1"/>
+<?php
+  if ( isset($OLANG['FUNCTION_ZLMEDIAKIT_AUDIO_ENABLED']) ) {
+    echo '<div class="form-text">'.$OLANG['FUNCTION_ZLMEDIAKIT_AUDIO_ENABLED']['Help'].'</div>';
+  }
+?>
+        </div>
         <div class="form-group" id="FunctionRTSP2WebEnabled">
           <label for="newRTSP2WebEnabled"><?php echo translate('RTSP2Web Enabled') ?></label>
           <input type="checkbox" name="newRTSP2WebEnabled" id="newRTSP2WebEnabled" value="1"/>
@@ -79,7 +98,6 @@ if ( !canEdit('Monitors') ) return;
     echo '<div class="form-text">'.$OLANG['FUNCTION_RTWP2WEB_ENABLED']['Help'].'</div>';
   }
 ?>
-
         </div>
         <div class="form-group" id="FunctionJanusEnabled">
           <label for="newJanusEnabled"><?php echo translate('Janus Enabled') ?></label>

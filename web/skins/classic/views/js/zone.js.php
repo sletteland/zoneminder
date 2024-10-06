@@ -71,6 +71,7 @@ monitorData[monitorData.length] = {
   'width': <?php echo $monitor->ViewWidth() ?>,
   'height':<?php echo $monitor->ViewHeight() ?>,
   'janusEnabled':<?php echo $monitor->JanusEnabled() ?>,
+  'ZlMediaKitEnabled': <?php echo $monitor->ZlMediaKitEnabled() ?>,
   'RTSP2WebEnabled': <?php echo $monitor->RTSP2WebEnabled() ?>,
   'RTSP2WebType': '<?php echo $monitor->RTSP2WebType() ?>',
   'url': '<?php echo $monitor->UrlToIndex( ZM_MIN_STREAMING_PORT ? ($monitor->Id() + ZM_MIN_STREAMING_PORT) : '') ?>',

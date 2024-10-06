@@ -1698,6 +1698,22 @@ our @options = (
     category    => 'web',
   },
   {
+    name        => 'ZM_WEB_RESIZE_CONSOLE',
+    default     => 'yes',
+    description => 'Should the console window resize itself to fit',
+    help        => q`
+      Traditionally the main ZoneMinder web console window has
+      resized itself to shrink to a size small enough to list only
+      the monitors that are actually present. This is intended to
+      make the window more unobtrusize but may not be to everyone's
+      tastes, especially if opened in a tab in browsers which support
+      this kind if layout. Switch this option off to have the console
+      window size left to the users preference
+      `,
+    type        => $types{boolean},
+    category    => 'web',
+  },
+  {
     name        => 'ZM_WEB_ID_ON_CONSOLE',
     default     => 'yes',
     description => 'Should the console list the monitor id',
@@ -3990,6 +4006,28 @@ our @options = (
     description => 'Port Number to receive alarms from Alarm Server',
     help        => '',
     type        => $types{integer},
+    category    => 'system',
+  },
+  {
+    name        => 'ZM_ZLMEDIAKIT_SECRET',
+    default     => '',
+    description => 'Password for ZlMediaKit  streaming administration.',
+    help        => q`This value should be set to a secure password,
+      and match the "secret" value in ZlMediaKit config.ini .
+      `,
+    type        => $types{string},
+    category    => 'system',
+  },
+  {
+    name        => 'ZM_ZLMEDIAKIT_PATH',
+    default     => '',
+    description => 'URL for ZlMediaKit HTTP/S port',
+    help        => q`ZlMediaKit requires HTTP/S communication to administer
+      and initiate webrtc streams. If left blank, this will default to
+      the ZM hostname, port 443/zlmediakit. This setting is particularly
+      useful for putting ZlMediaKit behind a reverse proxy.
+      `,
+    type        => $types{string},
     category    => 'system',
   },
 );

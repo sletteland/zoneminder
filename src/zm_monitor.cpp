@@ -82,6 +82,7 @@ std::string load_monitor_sql =
   "SELECT `Id`, `Name`, `Deleted`, `ServerId`, `StorageId`, `Type`, "
   "`Capturing`+0, `Analysing`+0, `AnalysisSource`+0, `AnalysisImage`+0, "
   "`Recording`+0, `RecordingSource`+0, `Decoding`+0, "
+  "`ZlMediaKitEnabled`, `ZlMediaKitType`, `ZlMediaKitAudioEnabled`,"
   "`RTSP2WebEnabled`, `RTSP2WebType`, "
   "`JanusEnabled`, `JanusAudioEnabled`, `Janus_Profile_Override`, "
   "`Janus_Use_RTSP_Restream`, `Janus_RTSP_User`, `Janus_RTSP_Session_Timeout`, "
@@ -167,6 +168,12 @@ std::string RTSP2Web_Strings[] = {
   "WebRTC"
 };
 
+std::string ZlMediaKit_Strings[] = {
+  "HLS",
+  "MSE",
+  "WebRTC"
+};
+  
 std::string TriggerState_Strings[] = {
   "Cancel", "On", "Off"
 };
@@ -181,6 +188,9 @@ Monitor::Monitor() :
   analysing(ANALYSING_ALWAYS),
   recording(RECORDING_ALWAYS),
   decoding(DECODING_ALWAYS),
+  ZlMediaKit_enabled(false),
+  ZlMediaKit_type(WEBRTC),
+  ZlMediaKit_audio_enabled(false),
   RTSP2Web_enabled(false),
   RTSP2Web_type(WEBRTC),
   janus_enabled(false),
@@ -317,6 +327,7 @@ Monitor::Monitor() :
   n_linked_monitors(0),
   linked_monitors(nullptr),
   Event_Poller_Closes_Event(false),
+  ZlMediaKit_Manager(nullptr),
   RTSP2Web_Manager(nullptr),
   Janus_Manager(nullptr),
   Amcrest_Manager(nullptr),
@@ -346,7 +357,7 @@ Monitor::Monitor() :
 /*
    std::string load_monitor_sql =
    "SELECT `Id`, `Name`, `Deleted`, `ServerId`, `StorageId`, `Type`, `Capturing`+0, `Analysing`+0, `AnalysisSource`+0, `AnalysisImage`+0,"
-   "`Recording`+0, `RecordingSource`+0, `Decoding`+0, RTSP2WebEnabled, RTSP2WebType, JanusEnabled, JanusAudioEnabled, Janus_Profile_Override, Janus_Use_RTSP_Restream, Janus_RTSP_User, Janus_RTSP_Session_Timeout, "
+   "`Recording`+0, `RecordingSource`+0, `Decoding`+0, ZlMediaKit_ManagerEnabled, ZlMediaKitType, RTSP2WebEnabled, RTSP2WebType, JanusEnabled, JanusAudioEnabled, Janus_Profile_Override, Janus_Use_RTSP_Restream, Janus_RTSP_User, Janus_RTSP_Session_Timeout, "
    "LinkedMonitors, `EventStartCommand`, `EventEndCommand`, "
    "AnalysisFPSLimit, AnalysisUpdateDelay, MaxFPS, AlarmMaxFPS,"
    "Device, Channel, Format, V4LMultiBuffer, V4LCapturesPerFrame, " // V4L Settings
@@ -417,6 +428,12 @@ void Monitor::Load(MYSQL_ROW dbrow, bool load_zones=true, Purpose p = QUERY) {
   decoding = (DecodingOption)atoi(dbrow[col]);
   col++;
   // See below after save_jpegs for a recalculation of decoding_enabled
+  ZlMediaKit_enabled = dbrow[col] ? atoi(dbrow[col]) : false;
+  col++;
+  ZlMediaKit_type = (ZlMediaKitOption)atoi(dbrow[col]);
+  col++;
+  ZlMediaKit_audio_enabled = dbrow[col] ? atoi(dbrow[col]) : false;
+  col++;
   RTSP2Web_enabled = dbrow[col] ? atoi(dbrow[col]) : false;
   col++;
   RTSP2Web_type = (RTSP2WebOption)atoi(dbrow[col]);
@@ -1153,6 +1170,14 @@ bool Monitor::connect() {
     shared_data->valid = true;
 
     ReloadLinkedMonitors();
+    
+    if (ZlMediaKit_enabled) {
+      Warning("new ZlMediaKitManager(this)");
+      ZlMediaKit_Manager = new ZlMediaKitManager(this);
+      Warning(" ZlMediaKit_Manager->add_to_ZlMediaKit()");
+      ZlMediaKit_Manager->add_to_ZlMediaKit();
+    }
+  
 
     if (RTSP2Web_enabled) {
       RTSP2Web_Manager = new RTSP2WebManager(this);
@@ -1882,6 +1907,15 @@ bool Monitor::Poll() {
       onvif->start();
     }
   }  // end if Amcrest or not
+      
+  if (ZlMediaKit_enabled and ZlMediaKit_Manager) {
+    Warning( "Trying to check ZlMediaKit in Poller");
+    if (ZlMediaKit_Manager->check_ZlMediaKit() == 0) {
+      Warning( "Trying to add stream to ZlMediaKit");
+      ZlMediaKit_Manager->add_to_ZlMediaKit(); 
+    }
+  }   
+      
 
   if (RTSP2Web_enabled and RTSP2Web_Manager) {
     Debug(1, "Trying to check RTSP2Web in Poller");
@@ -3329,7 +3363,7 @@ int Monitor::PrimeCapture() {
   }  // end if rtsp_server
 
   //Poller Thread
-  if (onvif_event_listener || janus_enabled || RTSP2Web_enabled || use_Amcrest_API) {
+  if (onvif_event_listener || janus_enabled || RTSP2Web_enabled ||  ZlMediaKit_enabled || use_Amcrest_API) {
     if (!Poller) {
       Debug(1, "Creating unique poller thread");
       Poller = zm::make_unique<PollThread>(this);
@@ -3453,6 +3487,13 @@ int Monitor::Close() {
     delete onvif;
     onvif = nullptr;
   }
+  
+  // ZlMediaKit teardown
+  if (ZlMediaKit_enabled and (purpose == CAPTURE) and ZlMediaKit_Manager) {
+    delete ZlMediaKit_Manager;
+    ZlMediaKit_Manager = nullptr;
+  } 
+      
 
   // RTSP2Web teardown
   if (RTSP2Web_enabled and (purpose == CAPTURE) and RTSP2Web_Manager) {

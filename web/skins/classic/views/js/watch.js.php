@@ -47,6 +47,8 @@ monitorData[monitorData.length] = {
   'connKey': <?php echo $m->connKey() ?>,
   'width': <?php echo $m->ViewWidth() ?>,
   'height':<?php echo $m->ViewHeight() ?>,
+  'ZlMediaKitEnabled':<?php echo $m->ZlMediaKitEnabled() ?>,
+  'ZlMediaKitType':'<?php echo $m->TZlMediaKitType() ?>',
   'RTSP2WebEnabled':<?php echo $m->RTSP2WebEnabled() ?>,
   'RTSP2WebType':'<?php echo $m->RTSP2WebType() ?>',
   'janusEnabled':<?php echo $m->JanusEnabled() ?>,

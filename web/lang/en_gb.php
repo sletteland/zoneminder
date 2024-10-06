@@ -946,6 +946,16 @@ None: No frames will be decoded, live view and thumbnails will not be available~
       RTSP2Web supports MSE (Media Source Extensions), HLS (HTTP Live Streaming), and WebRTC.
       Each has its advantages, with WebRTC probably being the most performant, but also the most picky about codecs.'
   ),
+  'FUNCTION_ZLMEDIAKIT_ENABLED' => array(
+    'Help' => '
+      Attempt to use ZlMediaKit streaming server for h264/h265 live view. Experimental, but allows
+      for significantly better performance.'
+  ),
+  'FUNCTION_RTSP2WEB_TYPE' => array(
+    'Help' => '
+      ZlMediaKit supports MSE (Media Source Extensions), HLS (HTTP Live Streaming), and WebRTC.(Only WebRTC is currently implemented)
+      Each has its advantages, with WebRTC probably being the most performant, but also the most picky about codecs.'
+  ),
   'FUNCTION_JANUS_ENABLED' => array(
     'Help' => '
       Attempt to use Janus streaming server for h264/h265 live view. Experimental, but allows

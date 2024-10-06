@@ -212,6 +212,8 @@ function getStreamModeMonitor($monitor) {
     $streamMode = 'janus';
   } else if ($monitor->RTSP2WebEnabled()) {
     $streamMode = $monitor->RTSP2WebType();
+  } else if ($monitor->ZlMediaKitEnabled()) {
+    $streamMode = $monitor->ZlMediaKitType();
   } else {
     $streamMode = getStreamMode();
   }
@@ -504,6 +506,7 @@ if ( $monitor->RTSP2WebEnabled() and $monitor->RTSP2WebType == "HLS") {
   } else {
     echo "There are no monitors to display\n";
   }
+  echo '<script src="'.cache_bust('js/whep.js') .'"></script>'.PHP_EOL;
   echo '<script src="'.cache_bust('js/MonitorStream.js') .'"></script>'.PHP_EOL;
   xhtmlFooter();
 ?>
